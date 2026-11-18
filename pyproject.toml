@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "docpilot"
+version = "0.1.0"
+description = "RAG support agent over the FastAPI docs: citations, guardrails, tools, evals, OpenTelemetry tracing"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Fardeen Khatri" }]
+dependencies = [
+  "agentlens @ git+https://github.com/FardeenK29/agentlens.git",
+  "langgraph>=0.3", "langchain-core>=0.3", "langchain-ollama", "langchain-text-splitters",
+  "qdrant-client>=1.12", "fastapi>=0.115", "uvicorn[standard]",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["docpilot"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

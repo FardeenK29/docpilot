@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocPilot</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230d857e'/%3E%3Cpath d='M24 8 8 14.5l6 2 2 6z' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eff2f5; --text: #131820; --muted: #556170; --faint: #87919f;
+    --line: #e2e6ec; --accent: #0d857e; --accent-ink: #ffffff; --accent-soft: #e0f3f1; --accent-2: #2f6fdb;
+    --amber: #995700; --amber-soft: #fff2dc; --red: #b4332a; --red-soft: #fde9e7; --violet: #5845c8; --violet-soft: #eeebff;
+    --code-bg: #0f141a; --code-line: #232b36; --code-text: #e3e9f0;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 10px 30px rgba(16, 24, 40, .06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0e12; --surface: #12171e; --surface-2: #19202a; --text: #e8ecf1; --muted: #9aa6b5; --faint: #6c7787;
+      --line: #232a34; --accent: #3cc2b9; --accent-ink: #04201e; --accent-soft: rgba(60, 194, 185, .13); --accent-2: #6aa1ff;
+      --amber: #f0b45a; --amber-soft: rgba(240, 180, 90, .12); --red: #f27a6a; --red-soft: rgba(242, 122, 106, .12);
+      --violet: #a99bff; --violet-soft: rgba(169, 155, 255, .13);
+      --code-bg: #090c10; --code-line: #1c232c; --code-text: #dfe6ee;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0e12; --surface: #12171e; --surface-2: #19202a; --text: #e8ecf1; --muted: #9aa6b5; --faint: #6c7787;
+    --line: #232a34; --accent: #3cc2b9; --accent-ink: #04201e; --accent-soft: rgba(60, 194, 185, .13); --accent-2: #6aa1ff;
+    --amber: #f0b45a; --amber-soft: rgba(240, 180, 90, .12); --red: #f27a6a; --red-soft: rgba(242, 122, 106, .12);
+    --violet: #a99bff; --violet-soft: rgba(169, 155, 255, .13);
+    --code-bg: #090c10; --code-line: #1c232c; --code-text: #dfe6ee;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; }
+  svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  button { font: inherit; color: inherit; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Header */
+  .top { position: sticky; top: 0; z-index: 10; height: 60px; display: flex; align-items: center; justify-content: space-between;
+         gap: 12px; padding: 0 24px; border-bottom: 1px solid var(--line);
+         background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: saturate(1.4) blur(12px); }
+  .brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .logo { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: #fff; flex: none;
+          background: linear-gradient(140deg, var(--accent), var(--accent-2)); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .logo svg { width: 17px; height: 17px; }
+  .brand b { font-size: 16px; letter-spacing: -.01em; }
+  .brand small { color: var(--faint); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .actions { display: flex; align-items: center; gap: 6px; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 11px; border-radius: 999px;
+          border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
+  .dot.ok { background: #22b07d; box-shadow: 0 0 0 3px rgba(34, 176, 125, .18); }
+  .dot.bad { background: var(--red); }
+  .ghost { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 9px; border: 0;
+           background: transparent; color: var(--muted); font-size: 13px; text-decoration: none; cursor: pointer; }
+  .ghost:hover { background: var(--surface-2); color: var(--text); }
+  .icon-only { width: 32px; padding: 0; justify-content: center; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; max-width: 1220px; margin: 0 auto; padding: 0 24px; }
+  .chat { display: flex; flex-direction: column; min-height: calc(100vh - 60px); min-width: 0; }
+  #log { flex: 1; padding: 20px 0 8px; }
+  .side { position: sticky; top: 60px; align-self: start; max-height: calc(100vh - 60px); overflow-y: auto;
+          padding: 24px 2px 24px 0; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Empty state */
+  .hero { max-width: 640px; margin: 7vh auto 0; text-align: center; }
+  .hero .logo { width: 52px; height: 52px; border-radius: 15px; margin: 0 auto; }
+  .hero .logo svg { width: 26px; height: 26px; }
+  .hero h1 { font-size: 30px; line-height: 1.2; letter-spacing: -.025em; margin: 18px 0 8px; }
+  .hero p { color: var(--muted); margin: 0 auto; max-width: 480px; }
+  .examples { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px; text-align: left; }
+  .ex { display: flex; flex-direction: column; justify-content: flex-start;
+        border: 1px solid var(--line); background: var(--surface); border-radius: 13px; padding: 14px 15px; cursor: pointer;
+        text-align: left; box-shadow: var(--shadow); transition: border-color .15s, transform .15s; }
+  .ex:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); transform: translateY(-1px); }
+  .ex .k { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--accent); }
+  .ex .q { margin-top: 6px; font-size: 14px; line-height: 1.45; }
+
+  /* Messages */
+  .row { display: flex; gap: 12px; margin: 22px 0; }
+  .row.user { flex-direction: column; align-items: flex-end; gap: 6px; }
+  .u-bubble { max-width: 78%; padding: 10px 14px; border-radius: 14px 14px 4px 14px; background: var(--surface-2);
+              white-space: pre-wrap; overflow-wrap: anywhere; }
+  mark.pii { background: var(--amber-soft); color: var(--amber); border-radius: 5px; padding: 1px 5px; font-weight: 600; font-size: .9em; }
+  .note { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--amber); }
+  .note svg { width: 13px; height: 13px; }
+  .avatar { width: 28px; height: 28px; border-radius: 8px; flex: none; margin-top: 4px; display: grid; place-items: center; color: #fff;
+            background: linear-gradient(140deg, var(--accent), var(--accent-2)); }
+  .avatar svg { width: 15px; height: 15px; }
+  .a-body { flex: 1; min-width: 0; padding: 6px 14px 12px; margin: -6px 0 0 -2px; border: 1px solid transparent; border-radius: 14px;
+            transition: background .15s, border-color .15s; }
+  .row.bot.selectable .a-body { cursor: pointer; }
+  .row.bot.selected .a-body { background: var(--surface); border-color: var(--line); box-shadow: var(--shadow); }
+  .md p { margin: 8px 0; }
+  .md h4 { margin: 14px 0 4px; font-size: 15px; }
+  .md ul, .md ol { margin: 6px 0; padding-left: 22px; }
+  .md li { margin: 3px 0; }
+  .md :not(pre) > code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface-2);
+                         padding: 1px 5px; border-radius: 5px; }
+  .code { margin: 12px 0; border-radius: 11px; overflow: hidden; background: var(--code-bg); border: 1px solid var(--code-line); }
+  .code-h { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px 6px 14px; font-size: 12px;
+            color: #8d9aab; border-bottom: 1px solid var(--code-line); }
+  .copy { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #8d9aab; font-size: 12px;
+          padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+  .copy:hover { background: rgba(255, 255, 255, .06); color: #dfe6ee; }
+  .copy svg { width: 13px; height: 13px; }
+  pre { margin: 0; padding: 14px 16px; overflow-x: auto; color: var(--code-text); font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .t-k { color: #c792ea; } .t-s { color: #a5d6a7; } .t-c { color: #66768a; font-style: italic; } .t-d { color: #f0b45a; } .t-n { color: #f78c6c; }
+  .cite { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; margin: 0 1px; border: 0;
+          border-radius: 5px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 700; line-height: 1;
+          vertical-align: 2px; cursor: pointer; }
+  .cite:hover { background: var(--accent); color: var(--accent-ink); }
+  .cite-row { margin: 8px 0; display: flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--faint); }
+  .inline-src { display: none; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .inline-src a { font-size: 12.5px; text-decoration: none; color: var(--accent); border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; }
+
+  .callout { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; margin: 6px 0 2px; }
+  .callout.amber { background: var(--amber-soft); }
+  .callout.amber > svg { color: var(--amber); margin-top: 3px; }
+  .callout.muted { background: var(--surface-2); }
+  .callout.muted > svg { color: var(--muted); margin-top: 3px; }
+  .callout.red { background: var(--red-soft); color: var(--red); }
+  .callout.red > svg { margin-top: 3px; }
+  .act { margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; border-radius: 8px;
+         border: 1px solid var(--line); background: var(--surface); font-size: 13px; cursor: pointer; }
+  .act:hover { border-color: var(--accent); color: var(--accent); }
+
+  .card { display: flex; gap: 12px; padding: 14px 16px; margin: 6px 0 2px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+  .card .ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; flex: none;
+              background: var(--violet-soft); color: var(--violet); }
+  .card .ttl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 600; }
+  .card .id { font: 600 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+  .card p { margin: 4px 0 0; }
+  .card .foot { margin-top: 8px; font-size: 12px; color: var(--faint); }
+  .sev { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 7px; border-radius: 6px; }
+  .sev.high { background: var(--red-soft); color: var(--red); }
+  .sev.medium { background: var(--amber-soft); color: var(--amber); }
+  .sev.low { background: var(--surface-2); color: var(--muted); }
+
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; font-size: 12.5px; color: var(--faint); }
+  .meta a { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; color: var(--muted); }
+  .meta a:hover { color: var(--accent); }
+  .meta svg { width: 13px; height: 13px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+           background: var(--accent-soft); color: var(--accent); }
+  .badge.abstained { background: var(--amber-soft); color: var(--amber); }
+  .badge.refused { background: var(--surface-2); color: var(--muted); }
+  .badge.ticket, .badge.escalated { background: var(--violet-soft); color: var(--violet); }
+  .badge.error { background: var(--red-soft); color: var(--red); }
+
+  .typing { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; padding-top: 4px; }
+  .dots { display: inline-flex; gap: 4px; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: bounce 1.2s infinite ease-in-out; }
+  .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+  .skel { height: 10px; border-radius: 6px; margin-top: 12px; background: linear-gradient(90deg, var(--surface-2), var(--line), var(--surface-2));
+          background-size: 200% 100%; animation: shimmer 1.4s infinite linear; }
+  @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); opacity: .5; } 40% { transform: translateY(-4px); opacity: 1; } }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .dots i, .skel { animation: none; } .ex { transition: none; } }
+
+  /* Composer */
+  .composer { position: sticky; bottom: 0; padding: 14px 0 18px; background: linear-gradient(to top, var(--bg) 72%, transparent); }
+  .box { display: flex; align-items: flex-end; gap: 8px; padding: 8px 8px 8px 16px; border: 1px solid var(--line); border-radius: 15px;
+         background: var(--surface); box-shadow: var(--shadow); transition: border-color .15s, box-shadow .15s; }
+  .box:focus-within { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); box-shadow: 0 0 0 4px var(--accent-soft); }
+  textarea { flex: 1; min-height: 24px; max-height: 160px; padding: 6px 0; border: 0; outline: 0; resize: none;
+             background: transparent; color: var(--text); font: inherit; }
+  textarea::placeholder { color: var(--faint); }
+  textarea:focus-visible { outline: none; }
+  .send { width: 36px; height: 36px; border: 0; border-radius: 10px; display: grid; place-items: center; cursor: pointer;
+          background: var(--accent); color: var(--accent-ink); }
+  .send:disabled { opacity: .45; cursor: default; }
+  .hint { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; padding: 0 6px; font-size: 12px; color: var(--faint); }
+  .hint span { display: inline-flex; align-items: center; gap: 6px; }
+  .hint svg { width: 13px; height: 13px; }
+  kbd { font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line); background: var(--surface); }
+
+  /* Side panels */
+  .panel { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px 16px; }
+  .panel h3 { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; font-size: 11.5px; font-weight: 600;
+              text-transform: uppercase; letter-spacing: .07em; color: var(--faint); }
+  .panel h3 span { text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .empty-note { color: var(--faint); font-size: 13px; margin: 2px 0; }
+  .src { display: flex; gap: 10px; padding: 9px 8px; margin: 0 -8px; border-radius: 10px; text-decoration: none; color: inherit;
+         transition: background .15s; }
+  .src:hover, .src.hot { background: var(--surface-2); }
+  .num { width: 22px; height: 22px; flex: none; border-radius: 6px; display: grid; place-items: center; font-size: 11.5px; font-weight: 700;
+         background: var(--accent-soft); color: var(--accent); }
+  .src-t { font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+  .src-h { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+  .src-h code { font-size: 11.5px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .src-s { margin: 5px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3;
+           -webkit-box-orient: vertical; overflow: hidden; }
+  .src-f { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11.5px; color: var(--faint); min-width: 0; }
+  .src-f span { white-space: nowrap; }
+  .src-f .host { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .bar { width: 48px; flex: none; height: 4px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 7px 12px; margin: 0; font-size: 13px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; text-align: right; }
+  .kv dd a { color: var(--accent); text-decoration: none; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat { padding: 10px 12px; border-radius: 10px; background: var(--surface-2); }
+  .stat b { display: block; font-size: 20px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 12px; color: var(--muted); line-height: 1.35; display: block; }
+  .small { margin: 10px 0 0; font-size: 12px; color: var(--faint); line-height: 1.5; }
+  .small a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 1000px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .side { display: none; }
+    .inline-src { display: flex; }
+    .row.bot.selected .a-body { background: none; border-color: transparent; box-shadow: none; }
+  }
+  @media (max-width: 640px) {
+    .top { padding: 0 16px; }
+    .layout { padding: 0 16px; }
+    .brand small, .pill .lbl, .ghost .lbl { display: none; }
+    .examples { grid-template-columns: 1fr; }
+    .hero { margin-top: 4vh; }
+    .hero h1 { font-size: 25px; }
+    .u-bubble { max-width: 90%; }
+    .a-body { padding: 4px 4px 10px; }
+    .hint .keys { display: none; }
+  }
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="m21 3-11 10"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M10 14 20 4M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.4-3.4 8.2-8 9-4.6-.8-8-4.6-8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.6-3.7 4-6 8-6s7.4 2.3 8 6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0-2 2z"/><path d="M4 20a2 2 0 0 0 2 2h14v-4"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.4v.3M12 17h.01"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trace" viewBox="0 0 24 24"><path d="M3 6h10M7 12h10M11 18h10"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand">
+    <div class="logo"><svg><use href="#i-plane"/></svg></div>
+    <b>DocPilot</b><small>Answers from the FastAPI docs, with sources</small>
+  </div>
+  <div class="actions">
+    <span class="pill" id="status" title="Model status"><i class="dot"></i><span class="lbl">Connecting…</span></span>
+    <button class="ghost" id="new" type="button" title="New chat"><svg><use href="#i-plus"/></svg><span class="lbl">New chat</span></button>
+    <button class="ghost icon-only" id="theme" type="button" aria-label="Toggle light or dark theme"><svg><use href="#i-moon"/></svg></button>
+  </div>
+</header>
+
+<div class="layout">
+  <main class="chat">
+    <div id="log"></div>
+    <form class="composer" id="f">
+      <div class="box">
+        <textarea id="q" rows="1" maxlength="2000" placeholder="Ask about FastAPI, or ask me to open a ticket…" aria-label="Message"></textarea>
+        <button class="send" id="send" aria-label="Send"><svg><use href="#i-send"/></svg></button>
+      </div>
+      <div class="hint">
+        <span><svg><use href="#i-shield"/></svg>Emails, phone numbers, cards and API keys are redacted before the model sees them</span>
+        <span class="keys"><kbd>Enter</kbd> send · <kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span>
+      </div>
+    </form>
+  </main>
+
+  <aside class="side" aria-label="Answer details">
+    <section class="panel">
+      <h3>Sources <span id="src-count"></span></h3>
+      <div id="sources"><p class="empty-note">The docs sections behind the selected answer show up here.</p></div>
+    </section>
+    <section class="panel">
+      <h3>This request</h3>
+      <div id="details"><p class="empty-note">Route, latency and the trace link for the selected answer.</p></div>
+    </section>
+    <section class="panel" id="score-panel" hidden>
+      <h3>Eval scorecard <span id="score-preset"></span></h3>
+      <div class="stats" id="stats"></div>
+      <p class="small" id="score-note"></p>
+    </section>
+  </aside>
+</div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const log = $('#log'), q = $('#q'), send = $('#send');
+const session = (crypto.randomUUID && crypto.randomUUID()) || String(Math.random()).slice(2);
+const turns = new Map();          // id -> {data, el}
+let selected = null, busy = false, seq = 0;
+const icon = (id) => `<svg><use href="#i-${id}"/></svg>`;
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+
+const EXAMPLES = [
+  {k: 'Cited answers', i: 'book', q: 'How do I add CORS to my app?'},
+  {k: "Says when it doesn't know", i: 'help', q: "How do I configure FastAPI's built-in rate limiter?"},
+  {k: 'Takes action, redacts PII', i: 'ticket', q: 'Please open a ticket: file uploads over 1 GB crash my server. Email me at dev@example.com'},
+  {k: 'Stays on topic', i: 'ban', q: 'Write me a short poem about the monsoon.'},
+];
+
+/* ---------- theme ---------- */
+function store(k, v) { try { v === undefined ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function isDark() {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function paintThemeIcon() { $('#theme').innerHTML = icon(isDark() ? 'sun' : 'moon'); }
+const saved = read('docpilot-theme'); if (saved) document.documentElement.dataset.theme = saved;
+paintThemeIcon();
+$('#theme').onclick = () => {
+  const next = isDark() ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next; store('docpilot-theme', next); paintThemeIcon();
+};
+
+/* ---------- markdown (small, safe subset) ---------- */
+function highlight(code) {
+  const re = /(#[^\n]*)|("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*')|(@[\w.]+)|\b(from|import|def|async|await|return|class|if|elif|else|for|while|in|with|as|try|except|finally|raise|yield|lambda|not|and|or|is|pass|None|True|False)\b|\b(\d+(?:\.\d+)?)\b/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(code))) {
+    out += esc(code.slice(last, m.index));
+    const cls = m[1] ? 'c' : m[2] ? 's' : m[3] ? 'd' : m[4] ? 'k' : 'n';
+    out += `<span class="t-${cls}">${esc(m[0])}</span>`;
+    last = re.lastIndex;
+  }
+  return out + esc(code.slice(last));
+}
+function inline(s, valid) {
+  return esc(s)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[(\d+)\]/g, (m, n) => valid.has(+n) ? `<button type="button" class="cite" data-n="${n}" title="Source ${n}">${n}</button>` : '');
+}
+function blocks(text, valid) {
+  let html = '', list = null, para = [];
+  const flushP = () => {
+    if (!para.length) return;
+    const joined = para.join(' ');
+    html += /^(\s*\[\d+\]\s*)+$/.test(joined)
+      ? `<div class="cite-row">Source${(joined.match(/\[\d+\]/g) || []).length > 1 ? 's' : ''} ${inline(joined, valid)}</div>`
+      : `<p>${para.map(l => inline(l, valid)).join('<br>')}</p>`;
+    para = [];
+  };
+  const flushL = () => {
+    if (!list) return;
+    html += `<${list.t}>${list.items.map(x => `<li>${inline(x, valid)}</li>`).join('')}</${list.t}>`;
+    list = null;
+  };
+  for (const raw of text.split('\n')) {
+    const l = raw.trimEnd(); let m;
+    if (!l.trim()) { flushP(); flushL(); continue; }
+    if ((m = l.match(/^\s*[-*•]\s+(.*)/))) { flushP(); if (!list || list.t !== 'ul') { flushL(); list = {t: 'ul', items: []}; } list.items.push(m[1]); continue; }
+    if ((m = l.match(/^\s*\d+[.)]\s+(.*)/))) { flushP(); if (!list || list.t !== 'ol') { flushL(); list = {t: 'ol', items: []}; } list.items.push(m[1]); continue; }
+    if ((m = l.match(/^#{1,6}\s+(.*)/))) { flushP(); flushL(); html += `<h4>${inline(m[1], valid)}</h4>`; continue; }
+    flushL(); para.push(l.trim());
+  }
+  flushP(); flushL();
+  return html;
+}
+function markdown(src, valid) {
+  return src.split('```').map((part, i) => {
+    if (i % 2 === 0) return blocks(part, valid);
+    const m = part.match(/^([\w+-]*)[ \t]*\n?([\s\S]*)$/);
+    const lang = m[1] || 'code';
+    const code = m[2].replace(/\s+$/, '').replace(/^ (?=\S)/, '');
+    return `<div class="code"><div class="code-h"><span>${esc(lang)}</span><button type="button" class="copy">${icon('copy')}Copy</button></div><pre><code>${highlight(code)}</code></pre></div>`;
+  }).join('');
+}
+
+/* ---------- rendering ---------- */
+function scrollDown() { window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'}); }
+function hero() {
+  log.innerHTML = `<section class="hero">
+    <div class="logo">${icon('plane')}</div>
+    <h1>Ask the FastAPI docs.</h1>
+    <p>Answers cite the exact docs section. When the docs don't cover something, it says so and offers a ticket instead of guessing.</p>
+    <div class="examples">${EXAMPLES.map((e, i) =>
+      `<button type="button" class="ex" data-i="${i}"><div class="k">${icon(e.i)}${esc(e.k)}</div><div class="q">${esc(e.q)}</div></button>`).join('')}
+    </div></section>`;
+  log.querySelectorAll('.ex').forEach(b => b.onclick = () => { q.value = EXAMPLES[b.dataset.i].q; submit(); });
+}
+function userRow(text) {
+  const row = document.createElement('div'); row.className = 'row user';
+  row.innerHTML = `<div class="u-bubble">${esc(text)}</div>`;
+  log.appendChild(row); return row;
+}
+function pendingRow() {
+  const row = document.createElement('div'); row.className = 'row bot';
+  row.innerHTML = `<div class="avatar">${icon('plane')}</div><div class="a-body">
+    <div class="typing"><span class="dots"><i></i><i></i><i></i></span>Searching the docs…</div>
+    <div class="skel" style="width:92%"></div><div class="skel" style="width:76%"></div><div class="skel" style="width:58%"></div></div>`;
+  log.appendChild(row); return row;
+}
+function metaRow(d) {
+  const label = {answered: 'Answered', abstained: 'Not in the docs', refused: 'Off-topic', ticket: 'Ticket opened', escalated: 'Escalated'}[d.route] || d.route;
+  return `<div class="meta"><span class="badge ${esc(d.route)}">${esc(label)}</span>
+    <span>${(d.latency_ms / 1000).toFixed(1)} s</span>
+    ${d.citations.length ? `<span>${d.citations.length} source${d.citations.length > 1 ? 's' : ''}</span>` : ''}
+    <a href="${esc(d.trace_url)}" target="_blank" rel="noopener">${icon('trace')}Trace</a></div>`;
+}
+function botBody(d) {
+  const valid = new Set(d.citations.map(c => c.n));
+  if (d.route === 'answered') {
+    const inlineSrc = d.citations.length ? `<div class="inline-src">${d.citations.map(c =>
+      `<a href="${esc(c.url)}" target="_blank" rel="noopener">[${c.n}] ${esc(c.title)}</a>`).join('')}</div>` : '';
+    return `<div class="md">${markdown(d.answer.trim(), valid)}</div>${inlineSrc}`;
+  }
+  if (d.route === 'abstained') {
+    return `<div class="callout amber">${icon('help')}<div>${esc(d.answer)}
+      <div><button type="button" class="act" data-ticket>${icon('ticket')}Open a ticket instead</button></div></div></div>`;
+  }
+  if (d.route === 'refused') return `<div class="callout muted">${icon('ban')}<div>${esc(d.answer)}</div></div>`;
+  if (d.route === 'ticket' && d.ticket) {
+    const t = d.ticket;
+    return `<div class="card"><div class="ic">${icon('ticket')}</div><div>
+      <div class="ttl">Ticket opened <span class="id">${esc(t.ticket_id)}</span><span class="sev ${esc(t.severity)}">${esc(t.severity)}</span></div>
+      <p>${esc(t.summary)}</p><div class="foot">Logged to data/tickets.jsonl, the stand-in for Zendesk or Jira.</div></div></div>`;
+  }
+  if (d.route === 'escalated' && d.ticket) {
+    const t = d.ticket;
+    return `<div class="card"><div class="ic">${icon('user')}</div><div>
+      <div class="ttl">Handed to a human <span class="id">${esc(t.ticket_id)}</span></div>
+      <p>A support engineer will reply ${esc(t.eta)}.</p><div class="foot">${esc(d.answer)}</div></div></div>`;
+  }
+  return `<div class="md">${markdown(d.answer, valid)}</div>`;
+}
+function select(id) {
+  selected = id;
+  document.querySelectorAll('.row.bot').forEach(r => r.classList.toggle('selected', r.dataset.id === String(id)));
+  const t = turns.get(id); const d = t && t.data;
+  const srcBox = $('#sources'), details = $('#details');
+  if (!d) {
+    $('#src-count').textContent = '';
+    srcBox.innerHTML = '<p class="empty-note">The docs sections behind the selected answer show up here.</p>';
+    details.innerHTML = '<p class="empty-note">Route, latency and the trace link for the selected answer.</p>';
+    return;
+  }
+  $('#src-count').textContent = d.citations.length ? `${d.citations.length} cited` : '';
+  srcBox.innerHTML = d.citations.length ? d.citations.map(c => {
+    const host = c.url.replace(/^https?:\/\//, '').replace(/#.*$/, '').replace(/\/$/, '');
+    const pct = c.score != null ? Math.round(Math.max(0, Math.min(1, c.score)) * 100) : null;
+    return `<a class="src" id="src-${c.n}" href="${esc(c.url)}" target="_blank" rel="noopener">
+      <span class="num">${c.n}</span><div style="min-width:0">
+        <div class="src-t">${esc(c.title)}</div>
+        <div class="src-h">› ${esc(c.heading).replace(/`([^`]+)`/g, '<code>$1</code>')}</div>
+        ${c.snippet ? `<p class="src-s">${esc(c.snippet)}</p>` : ''}
+        <div class="src-f">${pct != null ? `<span class="bar"><i style="width:${pct}%"></i></span><span>match ${c.score.toFixed(2)}</span>` : ''}<span class="host">${esc(host.replace(/^fastapi\.tiangolo\.com\//, ''))}</span></div>
+      </div></a>`;
+  }).join('') : `<p class="empty-note">${d.route === 'answered' ? 'This answer cited no sources.' : 'No docs were used for this reply.'}</p>`;
+  details.innerHTML = `<dl class="kv">
+    <dt>Route</dt><dd>${esc(d.route)}</dd>
+    <dt>Latency</dt><dd>${(d.latency_ms / 1000).toFixed(2)} s</dd>
+    <dt>PII redacted</dt><dd>${d.redacted.length ? esc(d.redacted.join(', ')) : 'none'}</dd>
+    ${d.ticket ? `<dt>Reference</dt><dd>${esc(d.ticket.ticket_id)}</dd>` : ''}
+    <dt>Trace</dt><dd><a href="${esc(d.trace_url)}" target="_blank" rel="noopener">Open in Jaeger ↗</a></dd></dl>`;
+}
+function flashSource(n) {
+  const el = document.getElementById('src-' + n);
+  if (!el) return false;
+  el.classList.add('hot'); el.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+  setTimeout(() => el.classList.remove('hot'), 1200); return true;
+}
+
+/* ---------- talking to the API ---------- */
+async function submit(text) {
+  text = (text ?? q.value).trim();
+  if (!text || busy) return;
+  if (log.querySelector('.hero')) log.innerHTML = '';
+  busy = true; send.disabled = true; q.value = ''; autosize();
+  const uRow = userRow(text);
+  const row = pendingRow(); scrollDown();
+  const id = ++seq; row.dataset.id = id;
+  try {
+    const r = await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({message: text, session_id: session})});
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.detail ? JSON.stringify(d.detail) : `HTTP ${r.status}`);
+    if (d.redacted && d.redacted.length) {
+      uRow.querySelector('.u-bubble').innerHTML = esc(d.redacted_message).replace(/\[(EMAIL|PHONE|CARD|AADHAAR|API_KEY)\]/g, '<mark class="pii">$1</mark>');
+      uRow.insertAdjacentHTML('beforeend', `<span class="note">${icon('shield')}Redacted before the model saw it</span>`);
+    }
+    turns.set(id, {data: d, el: row});
+    row.classList.add('selectable');
+    row.querySelector('.a-body').innerHTML = botBody(d) + metaRow(d);
+    select(id);
+  } catch (err) {
+    row.querySelector('.a-body').innerHTML = `<div class="callout red">${icon('alert')}<div>Couldn't get an answer: ${esc(err.message)}.
+      Check that Ollama is running and the docs are ingested.</div></div>`;
+  } finally {
+    busy = false; send.disabled = false; q.focus(); scrollDown();
+  }
+}
+
+log.addEventListener('click', (e) => {
+  const copy = e.target.closest('.copy');
+  if (copy) {
+    const code = copy.closest('.code').querySelector('pre').innerText;
+    (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(() => {
+      copy.innerHTML = icon('check') + 'Copied'; setTimeout(() => copy.innerHTML = icon('copy') + 'Copy', 1500);
+    }).catch(() => {});
+    return;
+  }
+  const row = e.target.closest('.row.bot');
+  const id = row && Number(row.dataset.id);
+  if (e.target.closest('[data-ticket]') && turns.has(id)) {
+    submit('Please open a ticket, the docs did not answer this: ' + turns.get(id).data.redacted_message);
+    return;
+  }
+  if (!turns.has(id)) return;
+  if (selected !== id) select(id);
+  const cite = e.target.closest('.cite');
+  if (cite && !flashSource(cite.dataset.n)) {
+    const c = turns.get(id).data.citations.find(x => String(x.n) === cite.dataset.n);
+    if (c) window.open(c.url, '_blank', 'noopener');
+  }
+});
+log.addEventListener('mouseover', (e) => {
+  const cite = e.target.closest('.cite'); const row = cite && cite.closest('.row.bot');
+  if (cite && row && Number(row.dataset.id) === selected) {
+    document.querySelectorAll('.src.hot').forEach(x => x.classList.remove('hot'));
+    const el = document.getElementById('src-' + cite.dataset.n); if (el) el.classList.add('hot');
+  }
+});
+log.addEventListener('mouseout', (e) => { if (e.target.closest('.cite')) document.querySelectorAll('.src.hot').forEach(x => x.classList.remove('hot')); });
+
+function autosize() { q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 160) + 'px'; }
+q.addEventListener('input', autosize);
+q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(); } });
+$('#f').addEventListener('submit', (e) => { e.preventDefault(); submit(); });
+$('#new').onclick = () => { if (busy) return; turns.clear(); select(null); hero(); q.focus(); };
+
+/* ---------- status + scorecard ---------- */
+fetch('/api/health').then(r => r.json()).then(h => {
+  $('#status').innerHTML = `<i class="dot ok"></i><span class="lbl">${esc(h.chat_model)} · local</span>`;
+}).catch(() => { $('#status').innerHTML = '<i class="dot bad"></i><span class="lbl">API offline</span>'; });
+
+fetch('/api/scorecard').then(r => r.ok ? r.json() : null).then(s => {
+  if (!s) return;
+  const Q = s.quality, E = s.efficiency, pct = v => v == null ? 'n/a' : Math.round(v * 100) + '%';
+  $('#stats').innerHTML = [
+    [pct(Q.question_pass_rate), 'docs questions pass'], [pct(Q.refuse_off_topic), 'off-topic refused'],
+    [pct(Q.abstain_on_unanswerable), 'abstains when unanswerable'], [String(Q.pii_leaks ?? 'n/a'), 'PII leaks'],
+  ].map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
+  $('#score-preset').textContent = s.preset;
+  $('#score-note').innerHTML = `${s.items}-item eval, scored without an LLM judge. Median ${E.latency_p50_s.toFixed(1)} s per reply with a 3B model on a laptop.`;
+  $('#score-panel').hidden = false;
+}).catch(() => {});
+
+if (matchMedia('(max-width: 640px)').matches) q.placeholder = 'Ask about FastAPI…';
+hero();
+q.focus();
+</script>
+</body>
+</html>

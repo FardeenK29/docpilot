@@ -1,0 +1,1492 @@
+{
+  "preset": "optimized",
+  "settings": {
+    "name": "optimized",
+    "chat_model": "qwen2.5:3b",
+    "router_model": "qwen2.5:1.5b",
+    "embed_model": "nomic-embed-text",
+    "use_rule_router": true,
+    "fallback": "gate",
+    "topic_min_score": 0.62,
+    "top_k": 4,
+    "min_score": 0.62,
+    "max_chunk_chars": 1200,
+    "max_answer_tokens": 350,
+    "num_ctx": 8192,
+    "router_num_ctx": 2048,
+    "collection": "fastapi_docs",
+    "qdrant_path": "data/qdrant",
+    "tickets_path": "data/tickets.jsonl",
+    "ollama_url": "http://localhost:11434"
+  },
+  "summary": {
+    "items": 50,
+    "pass_rate": 0.74,
+    "quality": {
+      "retrieval_hit_rate": 0.947,
+      "answered_rate": 1,
+      "citation_rate": 0.974,
+      "citation_accuracy": 0.816,
+      "key_fact_recall": 0.816,
+      "question_pass_rate": 0.684,
+      "abstain_on_unanswerable": 0.75,
+      "refuse_off_topic": 1,
+      "action_routing": 1,
+      "pii_leaks": 0
+    },
+    "efficiency": {
+      "latency_p50_s": 16.88,
+      "latency_p95_s": 29.27,
+      "latency_mean_s": 15.9,
+      "llm_calls_per_query": 0.88,
+      "input_tokens_per_query": 642,
+      "output_tokens_per_query": 103,
+      "projected_usd_per_1k_queries": 0.1583,
+      "projection_basis": "measured tokens x $0.15/$0.6 per 1M in/out"
+    }
+  },
+  "rows": [
+    {
+      "id": 1,
+      "kind": "question",
+      "question": "How do I declare an optional query parameter in FastAPI?",
+      "latency_s": 10.36,
+      "llm_calls": 1,
+      "input_tokens": 605,
+      "output_tokens": 65,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/query-params.md",
+        "tutorial/query-param-models.md",
+        "tutorial/cookie-param-models.md",
+        "tutorial/query-param-models.md"
+      ],
+      "cited_pages": [
+        "tutorial/query-params.md",
+        "tutorial/query-param-models.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[1] You can declare an optional query parameter in FastAPI by setting its default to `None`. For example, you can define a function parameter `q: Optional[str] = None` to make `q` an optional query parameter. [2] provides more details on how to declare optional query parameter models."
+    },
+    {
+      "id": 2,
+      "kind": "question",
+      "question": "How do I add CORS support to my FastAPI app?",
+      "latency_s": 23.77,
+      "llm_calls": 1,
+      "input_tokens": 859,
+      "output_tokens": 175,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/cors.md",
+        "tutorial/cors.md",
+        "deployment/docker.md",
+        "tutorial/cors.md"
+      ],
+      "cited_pages": [
+        "tutorial/cors.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To add CORS support to your FastAPI app, you can use the `CORSMiddleware` from the `fastapi.middleware.cors` module. Here's how you can configure it:\n\n```python\nfrom fastapi.middleware.cors import CORSMiddleware\n\n# Define origins, methods, headers, and credentials\norigins = [\"http://localhost\", \"http://localhost:4000\"]\n\napp = FastAPI()\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=origins,\n    allow_credentials=True,\n    allow_methods=[\"GET\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\"],\n    allow_headers=[\"Content-Type\", \"Access-Control-Allow-Origin\"],\n    expose_headers=[\"Content-Disposition\"],\n    max_age=3600\n)\n```\n\n[1] provides more details on how to configure `CORSMiddleware`."
+    },
+    {
+      "id": 3,
+      "kind": "question",
+      "question": "How can I run code when the application starts up and shuts down?",
+      "latency_s": 18.4,
+      "llm_calls": 1,
+      "input_tokens": 790,
+      "output_tokens": 130,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "advanced/events.md",
+        "advanced/events.md",
+        "deployment/concepts.md",
+        "deployment/concepts.md"
+      ],
+      "cited_pages": [
+        "advanced/events.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To run code when the application starts up and shuts down, you can use the `lifespan` parameter of the `FastAPI` app. This is the recommended way to handle the *startup* and *shutdown* events. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI(lifespan=asyncio.create_task(some_lifespan_function()))\n\nasync def some_lifespan_function():\n    # Code to run when the application starts up\n    print(\"Application startup\")\n    # Code to run when the application shuts down\n    print(\"Application shutdown\")\n```\n\n[1]"
+    },
+    {
+      "id": 4,
+      "kind": "question",
+      "question": "How do I return status code 201 from a path operation?",
+      "latency_s": 19.08,
+      "llm_calls": 1,
+      "input_tokens": 892,
+      "output_tokens": 124,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/path-operation-configuration.md",
+        "tutorial/response-status-code.md",
+        "tutorial/security/first-steps.md",
+        "advanced/response-change-status-code.md"
+      ],
+      "cited_pages": [
+        "tutorial/path-operation-configuration.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": false,
+      "key_fact_recall": 1.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "[1] You can return a status code 201 from a path operation by using the `status_code` parameter in the decorator method of your path operation. For example, if you are using the `@app.post()` decorator, you can specify the status code like this:\n\n```python\nfrom fastapi import FastAPI, status\n\napp = FastAPI()\n\n@app.post(\"/your-endpoint\")\ndef your_path_operation():\n    return {\"message\": \"Resource created successfully\", status_code=status.HTTP_201_CREATED}\n```\n\nThis will return a 201 status code in the response."
+    },
+    {
+      "id": 5,
+      "kind": "question",
+      "question": "How do I return a 404 error with a message when an item is not found?",
+      "latency_s": 20.77,
+      "llm_calls": 1,
+      "input_tokens": 879,
+      "output_tokens": 141,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/frontend.md",
+        "tutorial/handling-errors.md",
+        "tutorial/handling-errors.md",
+        "tutorial/response-status-code.md"
+      ],
+      "cited_pages": [
+        "tutorial/handling-errors.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To return a 404 error with a message when an item is not found, you can raise an `HTTPException` with the status code 404 and a `detail` parameter containing your message. Here's a code snippet demonstrating how to do this:\n\n```python\nfrom fastapi import FastAPI, HTTPException\n\napp = FastAPI()\n\n@app.get(\"/items/{item_id}\")\nasync def read_item(item_id: str):\n    if item_id not in [\"foo\", \"bar\"]:\n        raise HTTPException(status_code=404, detail=\"Item not found\")\n    return {f\"item\": f\"The {item_id} Wrestlers\"}\n```\n\n[3]"
+    },
+    {
+      "id": 6,
+      "kind": "question",
+      "question": "How do I run a task after returning the response, like sending an email?",
+      "latency_s": 19.02,
+      "llm_calls": 1,
+      "input_tokens": 761,
+      "output_tokens": 141,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/background-tasks.md",
+        "tutorial/middleware.md",
+        "tutorial/background-tasks.md",
+        "advanced/response-cookies.md"
+      ],
+      "cited_pages": [
+        "tutorial/background-tasks.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[1] You can run a task like sending an email after returning the response by using FastAPI's background tasks. In your path operation function, you can use the `.add_task()` method of the background tasks object to add your task function. Here's a short example:\n\n```python\nfrom fastapi import FastAPI, BackgroundTasks\nimport time\n\napp = FastAPI()\n\n@app.post(\"/submit/\")\nasync def submit(email: str, message: str, background_tasks: BackgroundTasks):\n    background_tasks.add_task(write_notification, email, message)\n    return {\"message\": \"Task scheduled to send email\"}\n```\n\nReplace `write_notification` with your actual task function that sends the email."
+    },
+    {
+      "id": 7,
+      "kind": "question",
+      "question": "How do I receive uploaded files in an endpoint?",
+      "latency_s": 16.94,
+      "llm_calls": 1,
+      "input_tokens": 444,
+      "output_tokens": 149,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/request-files.md",
+        "tutorial/request-files.md",
+        "tutorial/request-forms-and-files.md",
+        "tutorial/request-files.md"
+      ],
+      "cited_pages": [
+        "tutorial/request-files.md",
+        "tutorial/request-forms-and-files.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To receive uploaded files in an endpoint, you can use the `File` object. First, install `python-multipart` as it is required for handling uploaded files. Here's how you can do it:\n\n```console\n$ uv add python-multipart\n```\n\nThen, in your FastAPI endpoint, you can declare the file like this:\n\n```python\nfrom fastapi import FastAPI, File, UploadFile\n\napp = FastAPI()\n\n@app.post(\"/uploadfile/\")\nasync def create_upload_file(file: UploadFile = File(...)):\n    return {\"file_name\": file.filename, \"file_size\": file.size}\n```\n\n[1] and [3] provide detailed information on how to handle files and forms in FastAPI."
+    },
+    {
+      "id": 8,
+      "kind": "question",
+      "question": "How do I receive form fields instead of JSON?",
+      "latency_s": 12.09,
+      "llm_calls": 1,
+      "input_tokens": 697,
+      "output_tokens": 75,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/request-forms.md",
+        "tutorial/request-forms.md",
+        "tutorial/request-forms.md",
+        "tutorial/request-files.md"
+      ],
+      "cited_pages": [
+        "tutorial/request-forms.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To receive form fields instead of JSON, you can use the `Form` parameter in your FastAPI route definitions. First, ensure you have the `python-multipart` package installed, as it's required for handling form data. You can install it using the command:\n\n```console\n$ uv add python-multipart\n```\n\n[1] Form Data > Form Data"
+    },
+    {
+      "id": 9,
+      "kind": "question",
+      "question": "How do I declare a JSON request body?",
+      "latency_s": 25.75,
+      "llm_calls": 1,
+      "input_tokens": 744,
+      "output_tokens": 201,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/body.md",
+        "tutorial/body.md",
+        "tutorial/body.md",
+        "tutorial/body.md"
+      ],
+      "cited_pages": [
+        "tutorial/body.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To declare a JSON request body in FastAPI, you first need to create a Pydantic model that represents the structure of the data you expect to receive in the request body. Here's a concise example based on the sources provided:\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass Item(BaseModel):\n    name: str\n    price: float\n    tax: float = None  # Optional field with default value None\n\n@app.post(\"/items/\")\nasync def create_item(item: Item):\n    return item\n```\n\nIn this example, we define a `Item` Pydantic model with `name`, `price`, and `tax` fields. The `tax` field is marked as optional with a default value of `None`. Then, we use this model in a path operation to handle POST requests to `/items/`, expecting a JSON request body that matches the structure of the `Item` model. [3]"
+    },
+    {
+      "id": 10,
+      "kind": "question",
+      "question": "How do I read a custom header like User-Agent in a path operation?",
+      "latency_s": 22.01,
+      "llm_calls": 1,
+      "input_tokens": 883,
+      "output_tokens": 156,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/path-operation-advanced-configuration.md",
+        "tutorial/header-params.md",
+        "advanced/response-headers.md",
+        "advanced/response-headers.md"
+      ],
+      "cited_pages": [
+        "advanced/response-headers.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": false,
+      "key_fact_recall": 1.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To read a custom header like `User-Agent` in a path operation, you can use the `Header` parameter from FastAPI. Here's a basic example:\n\n```python\nfrom fastapi import FastAPI, Header\n\napp = FastAPI()\n\n@app.get(\"/user-agent\")\nasync def read_user_agent(user_agent: str = Header(None)):\n    return {\"User-Agent\": user_agent}\n```\n\nIn this example, `Header(None)` indicates that the `User-Agent` header is optional. If the header is present in the request, `user_agent` will be set to its value. If not, it will be `None`. [3] provides more details on how to use the `Response` parameter, but for reading headers, `Header` is sufficient."
+    },
+    {
+      "id": 11,
+      "kind": "question",
+      "question": "How do I read a cookie value in a path operation?",
+      "latency_s": 12.77,
+      "llm_calls": 1,
+      "input_tokens": 736,
+      "output_tokens": 78,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/dependencies/sub-dependencies.md",
+        "tutorial/cookie-params.md",
+        "advanced/response-cookies.md",
+        "tutorial/cookie-params.md"
+      ],
+      "cited_pages": [
+        "tutorial/cookie-params.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To read a cookie value in a path operation, you can use the `Cookie` parameter from FastAPI. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI, Cookie\n\napp = FastAPI()\n\n@app.get(\"/get-cookie\")\nasync def read_cookie(cookie_value: Cookie = Cookie(None)):\n    return {\"cookie_value\": cookie_value}\n```\n\n[2]"
+    },
+    {
+      "id": 12,
+      "kind": "question",
+      "question": "How do I make sure a password field is not returned in the response?",
+      "latency_s": 19.89,
+      "llm_calls": 1,
+      "input_tokens": 610,
+      "output_tokens": 164,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/response-model.md",
+        "tutorial/response-model.md",
+        "advanced/security/http-basic-auth.md",
+        "tutorial/sql-databases.md"
+      ],
+      "cited_pages": [
+        "tutorial/response-model.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[2] To ensure a password field is not returned in the response, you can define an output model that excludes the password field. Here's a code snippet to illustrate this:\n\n```python\nfrom pydantic import BaseModel\nfrom fastapi import FastAPI, Response\n\napp = FastAPI()\n\nclass UserIn(BaseModel):\n    username: str\n    password: str\n\nclass UserOut(BaseModel):\n    username: str\n\n@app.post(\"/users/\", response_model=UserOut)\nasync def create_user(user: UserIn) -> Response:\n    # Process user creation\n    return Response(content=user.username, headers={\"Content-Type\": \"application/json\"})\n```\n\nIn this example, `UserOut` only includes the `username` field, ensuring that the `password` field is not returned in the response."
+    },
+    {
+      "id": 13,
+      "kind": "question",
+      "question": "How do I add a maximum length validation to a query parameter?",
+      "latency_s": 16.88,
+      "llm_calls": 1,
+      "input_tokens": 753,
+      "output_tokens": 113,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/query-params-str-validations.md",
+        "tutorial/query-params-str-validations.md",
+        "tutorial/query-params-str-validations.md",
+        "tutorial/query-params-str-validations.md"
+      ],
+      "cited_pages": [
+        "tutorial/query-params-str-validations.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[1] To add a maximum length validation to a query parameter, you can use the `max_length` parameter inside the `Query` function within the `Annotated` structure. Here's how you can do it:\n\n```python\nq: str | None = Query(default=None, max_length=50)\n```\n\nThis code snippet ensures that the `q` parameter is a string with a maximum length of 50 characters. If the provided value exceeds this length, FastAPI will validate it and show a clear error message to the client."
+    },
+    {
+      "id": 14,
+      "kind": "question",
+      "question": "How do I validate that a path parameter is greater than zero?",
+      "latency_s": 12.91,
+      "llm_calls": 1,
+      "input_tokens": 628,
+      "output_tokens": 90,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/path-params-numeric-validations.md",
+        "tutorial/path-params-numeric-validations.md",
+        "tutorial/path-params-numeric-validations.md",
+        "tutorial/path-params.md"
+      ],
+      "cited_pages": [
+        "tutorial/path-params-numeric-validations.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To validate that a path parameter is greater than zero, you can use the `gt=0` constraint. Here's how you can define a route with this validation:\n\n```python\nfrom fastapi import FastAPI, Path\n\napp = FastAPI()\n\n@app.get(\"/items/{item_id}\")\nasync def read_item(item_id: int = Path(..., ge=0)):\n    return {\"item_id\": item_id}\n```\n\n[2]"
+    },
+    {
+      "id": 15,
+      "kind": "question",
+      "question": "What is dependency injection in FastAPI and how do I use Depends?",
+      "latency_s": 25.81,
+      "llm_calls": 1,
+      "input_tokens": 725,
+      "output_tokens": 213,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "features.md",
+        "tutorial/dependencies/index.md",
+        "tutorial/dependencies/index.md",
+        "tutorial/dependencies/index.md"
+      ],
+      "cited_pages": [
+        "features.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": false,
+      "key_fact_recall": 1.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "[1] Dependency Injection in FastAPI is a powerful system that allows you to define dependencies for your path operation functions. You can use the `Depends()` function to inject dependencies into your path operation functions. For example, to inject a database session, you might define a function that returns a database session and use `Depends()` to inject it into your path operation function. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI, Depends\nfrom sqlalchemy.orm import Session\nfrom sqlalchemy.ext.asyncio import AsyncSession\n\napp = FastAPI()\n\n# Example of a database session dependency\nasync def get_db_session(session: AsyncSession = Depends()):\n    # Your database session logic here\n    return session\n\n# Path operation function that uses the database session\n@app.get(\"/users/\")\nasync def read_users(db_session: AsyncSession = Depends()):\n    # Use the db_session to query the database\n    return db_session\n```\n\nThis example shows how to use `Depends()` to inject a database session into a path operation function."
+    },
+    {
+      "id": 16,
+      "kind": "question",
+      "question": "How do I create a dependency that closes a database session after the request?",
+      "latency_s": 26.6,
+      "llm_calls": 1,
+      "input_tokens": 892,
+      "output_tokens": 203,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/sql-databases.md",
+        "advanced/advanced-dependencies.md",
+        "advanced/advanced-dependencies.md",
+        "advanced/advanced-dependencies.md"
+      ],
+      "cited_pages": [
+        "tutorial/sql-databases.md"
+      ],
+      "retrieval_hit": false,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": false,
+      "key_fact_recall": 1.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To create a dependency that closes a database session after the request, you can use the `yield` feature in FastAPI to ensure the session is closed after the request is completed. Here's how you can do it:\n\n```Python\nfrom fastapi import FastAPI, Depends\nfrom sqlalchemy.orm import Session\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy import create_engine\n\napp = FastAPI()\n\n# Initialize SQLAlchemy\nSQLALCHEMY_DATABASE_URL = \"sqlite:///./test.db\"\nengine = create_engine(SQLALCHEMY_DATABASE_URL)\nSessionLocal = Session(engine)\n\nBase = declarative_base()\n\n# Dependency to get the session\ndef get_session():\n    db = SessionLocal()\n    try:\n        yield db  # Use yield to ensure the session is closed after the request\n    finally:\n        db.close()\n\n# Example route using the session dependency\n@app.get(\"/items/\")\ndef read_items(session: Session = Depends(get_session)):\n    return session.query(Base).all()\n```\n\n[1]"
+    },
+    {
+      "id": 17,
+      "kind": "question",
+      "question": "How do I apply a dependency to every route in the application?",
+      "latency_s": 26.79,
+      "llm_calls": 1,
+      "input_tokens": 929,
+      "output_tokens": 203,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/advanced-dependencies.md",
+        "tutorial/bigger-applications.md",
+        "advanced/testing-dependencies.md",
+        "tutorial/dependencies/global-dependencies.md"
+      ],
+      "cited_pages": [
+        "tutorial/dependencies/global-dependencies.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To apply a dependency to every route in the application, you can use the `FastAPI` application's `dependencies` attribute. This attribute allows you to add dependencies that will be applied to all path operations in the application. Here's how you can do it:\n\n```python\nfrom fastapi import FastAPI, Depends\n\napp = FastAPI()\n\n# Define your dependency\ndef my_dependency():\n    # Your dependency logic here\n    pass\n\n# Apply the dependency to all path operations\napp.dependency_overrides = {my_dependency: my_dependency}\n\n# Now, `my_dependency` will be used for all path operations\n@app.get(\"/items\")\nasync def read_items(my_dependency=Depends(my_dependency)):\n    return {\"items\": \"read\"}\n\n@app.post(\"/items\")\nasync def create_items(my_dependency=Depends(my_dependency)):\n    return {\"items\": \"created\"}\n```\n\n[4] demonstrates how to add dependencies to the entire application, which is similar to applying a dependency to every route."
+    },
+    {
+      "id": 18,
+      "kind": "question",
+      "question": "How do I split a big FastAPI app into multiple files?",
+      "latency_s": 14.33,
+      "llm_calls": 1,
+      "input_tokens": 568,
+      "output_tokens": 110,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/bigger-applications.md",
+        "tutorial/bigger-applications.md",
+        "tutorial/bigger-applications.md",
+        "deployment/docker.md"
+      ],
+      "cited_pages": [
+        "tutorial/bigger-applications.md",
+        "tutorial/bigger-applications.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To split a big FastAPI app into multiple files, you can follow the structure described in [1]. You import and create a `FastAPI` class in a main file, like `main.py`, and then import and use other modules in your application from separate files. FastAPI automatically detects and serves your app when you run it from a single file. For example, you might have a `users.py` file for user-related routes and import it in `main.py`. [2] provides more details on how to structure your application."
+    },
+    {
+      "id": 19,
+      "kind": "question",
+      "question": "How do I write tests for my FastAPI app?",
+      "latency_s": 8.81,
+      "llm_calls": 1,
+      "input_tokens": 635,
+      "output_tokens": 47,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/testing.md",
+        "tutorial/index.md",
+        "deployment/versions.md",
+        "tutorial/testing.md"
+      ],
+      "cited_pages": [
+        "tutorial/testing.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "[1] You should add tests for your app. **FastAPI** makes it very easy to do so, thanks to Starlette. Check the docs for more details: [Testing](../tutorial/testing.md) [1]."
+    },
+    {
+      "id": 20,
+      "kind": "question",
+      "question": "How do I serve static files like CSS and images?",
+      "latency_s": 13.95,
+      "llm_calls": 1,
+      "input_tokens": 630,
+      "output_tokens": 100,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "how-to/custom-docs-ui-assets.md",
+        "tutorial/static-files.md",
+        "advanced/templates.md",
+        "how-to/custom-docs-ui-assets.md"
+      ],
+      "cited_pages": [
+        "how-to/custom-docs-ui-assets.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": false,
+      "key_fact_recall": 1.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To serve static files like CSS and images, you can use `StaticFiles` from FastAPI. Here's a simple example:\n\n```python\nfrom fastapi.staticfiles import StaticFiles\n\napp = FastAPI()\n\n# Mount the StaticFiles instance in the path '/static'\napp.mount(\"/static\", StaticFiles(directory=\"path/to/static/files\"), name=\"static\")\n```\n\nThis mounts a directory as static files, and you can access them via URLs like `/static/styles.css`. [1]"
+    },
+    {
+      "id": 21,
+      "kind": "question",
+      "question": "How do I write a custom HTTP middleware that adds a processing-time header?",
+      "latency_s": 17.78,
+      "llm_calls": 1,
+      "input_tokens": 755,
+      "output_tokens": 125,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/middleware.md",
+        "tutorial/middleware.md",
+        "tutorial/handling-errors.md",
+        "advanced/custom-response.md"
+      ],
+      "cited_pages": [
+        "tutorial/middleware.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To write a custom HTTP middleware that adds a processing-time header, you can use the `@app.middleware(\"http\")` decorator. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI, Request\nimport time\n\napp = FastAPI()\n\n@app.middleware(\"http\")\nasync def add_process_time_header(request: Request, call_next):\n    start_time = time.perf_counter()\n    response = await call_next(request)\n    process_time = time.perf_counter() - start_time\n    response.headers[\"X-Process-Time\"] = str(process_time)\n    return response\n```\n\n[1]"
+    },
+    {
+      "id": 22,
+      "kind": "question",
+      "question": "How do I issue and verify JWT access tokens?",
+      "latency_s": 38.94,
+      "llm_calls": 1,
+      "input_tokens": 785,
+      "output_tokens": 350,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/security/oauth2-jwt.md",
+        "tutorial/security/oauth2-jwt.md",
+        "tutorial/security/oauth2-jwt.md",
+        "tutorial/security/oauth2-jwt.md"
+      ],
+      "cited_pages": [],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": false,
+      "citation_correct": false,
+      "key_fact_recall": 1.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To issue a JWT access token, you need to create a `timedelta` for the expiration time and then generate a JWT token using the `SECRET_KEY` and `ALGORITHM`. Here's a code snippet to demonstrate this:\n\n```python\nfrom datetime import timedelta\nimport jwt\nimport os\n\n# Assuming SECRET_KEY and ALGORITHM are already defined\nSECRET_KEY = os.getenv('SECRET_KEY', '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7')\nALGORITHM = 'HS256'\n\n# Define the expiration time for the token\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\n# Function to generate a new access token\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\n# Example usage\naccess_token = create_access_token({\"username\": \"johndoe\"})\nprint(access_token)\n```\n\nFor verifying the JWT token, you would decode the token using the `SECRET_KEY` and `ALGORITHM` and check if the token is valid. Here's a basic example:\n\n```python\ndef verify_token(token: str):\n    try:\n        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        return decoded_token if decoded_token else None\n    except jwt.ExpiredSignatureError:"
+    },
+    {
+      "id": 23,
+      "kind": "question",
+      "question": "How do I get the current logged-in user in a path operation?",
+      "latency_s": 8.63,
+      "llm_calls": 1,
+      "input_tokens": 501,
+      "output_tokens": 59,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/security/get-current-user.md",
+        "tutorial/security/get-current-user.md",
+        "tutorial/security/simple-oauth2.md",
+        "tutorial/security/get-current-user.md"
+      ],
+      "cited_pages": [
+        "tutorial/security/get-current-user.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.5,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To get the current logged-in user in a path operation, you need to create a dependency `get_current_user` that receives a `token` as a `str`. This `get_current_user` dependency can then be used in your path operation to fetch the user information. [4]"
+    },
+    {
+      "id": 24,
+      "kind": "question",
+      "question": "How do I accept WebSocket connections?",
+      "latency_s": 17.04,
+      "llm_calls": 1,
+      "input_tokens": 754,
+      "output_tokens": 119,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/websockets.md",
+        "advanced/websockets.md",
+        "advanced/websockets.md",
+        "advanced/websockets.md"
+      ],
+      "cited_pages": [
+        "advanced/websockets.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To accept WebSocket connections in FastAPI, you need to use the `WebSocket` object in your route handler. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI, WebSocket\nfrom fastapi.websockets import WebSocketDisconnect\n\napp = FastAPI()\n\n@app.websocket(\"/ws\")\nasync def websocket_endpoint(websocket: WebSocket):\n    await websocket.accept()\n    try:\n        while True:\n            data = await websocket.receive_text()\n            await websocket.send_text(f\"Message text was: {data}\")\n    except WebSocketDisconnect:\n        print(\"Client disconnected\")\n```\n\n[1]"
+    },
+    {
+      "id": 25,
+      "kind": "question",
+      "question": "How do I load settings from environment variables?",
+      "latency_s": 21.13,
+      "llm_calls": 1,
+      "input_tokens": 702,
+      "output_tokens": 173,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/settings.md",
+        "advanced/settings.md",
+        "advanced/settings.md",
+        "advanced/settings.md"
+      ],
+      "cited_pages": [
+        "advanced/settings.md",
+        "advanced/settings.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.5,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To load settings from environment variables, you can create a `Settings` object using Pydantic, as described in [2]. Here's a concise example:\n\n```python\nfrom pydantic import BaseSettings\nfrom pydantic.env_settings import EnvSettingsSource\n\nclass Settings(BaseSettings):\n    app_name: str = \"default_name\"\n    items_per_user: int = 10\n    admin_email: str = \"admin@example.com\"\n\n    class Config:\n        env_file = \".env\"  # Path to your environment file\n        env_prefix = \"APP_\"\n        case_sensitive = False\n        env_nested_delimiter = \"__\"\n\nsettings = Settings()\n```\n\nIn this example, the `Config` class in the `Settings` class is used to specify the environment file path and other settings for reading environment variables. [1]"
+    },
+    {
+      "id": 26,
+      "kind": "question",
+      "question": "How do I set a cookie on the response?",
+      "latency_s": 16.49,
+      "llm_calls": 1,
+      "input_tokens": 835,
+      "output_tokens": 104,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/response-cookies.md",
+        "advanced/response-cookies.md",
+        "advanced/response-cookies.md",
+        "advanced/response-change-status-code.md"
+      ],
+      "cited_pages": [
+        "advanced/response-cookies.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "You can set a cookie on the response by using a `Response` parameter in your path operation function. Here's a concise example:\n\n```python\nfrom fastapi import FastAPI, Response\nfrom fastapi.responses import JSONResponse\n\napp = FastAPI()\n\n@app.get(\"/set-cookie/\")\nasync def set_cookie(response: Response):\n    response.set_cookie(key=\"testcookie\", value=\"This is a test cookie\", httponly=True)\n    return {\"message\": \"Cookie set successfully\"}\n```\n\n[1]"
+    },
+    {
+      "id": 27,
+      "kind": "question",
+      "question": "How do I add custom headers to a response?",
+      "latency_s": 14.68,
+      "llm_calls": 1,
+      "input_tokens": 709,
+      "output_tokens": 104,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "advanced/response-headers.md",
+        "advanced/response-headers.md",
+        "tutorial/handling-errors.md",
+        "advanced/response-headers.md"
+      ],
+      "cited_pages": [
+        "advanced/response-headers.md",
+        "advanced/response-headers.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "You can add custom headers to a response by using the `Response` object. Here's a concise example:\n\n```python\nfrom fastapi import FastAPI, Response\n\napp = FastAPI()\n\n@app.get(\"/add-header/\")\nasync def add_header(response: Response):\n    response.headers[\"X-Custom-Header\"] = \"CustomValue\"\n    return {\"message\": \"Custom header added successfully\"}\n```\n\n[1] and [2] provide details on how to use the `Response` object to set headers."
+    },
+    {
+      "id": 28,
+      "kind": "question",
+      "question": "How do I return HTML instead of JSON?",
+      "latency_s": 14.22,
+      "llm_calls": 1,
+      "input_tokens": 738,
+      "output_tokens": 94,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/first-steps.md",
+        "advanced/custom-response.md",
+        "advanced/response-directly.md",
+        "advanced/custom-response.md"
+      ],
+      "cited_pages": [
+        "advanced/custom-response.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To return HTML instead of JSON, you can use the `Response` class directly in your path operation function. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI, Response\n\napp = FastAPI()\n\n@app.get(\"/html\")\nasync def read_html():\n    response = Response(content=\"<html><body><h1>Hello, HTML!</h1></body></html>\", media_type=\"text/html\")\n    return response\n```\n\n[2]"
+    },
+    {
+      "id": 29,
+      "kind": "question",
+      "question": "How do I render Jinja2 templates?",
+      "latency_s": 20.41,
+      "llm_calls": 1,
+      "input_tokens": 621,
+      "output_tokens": 170,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "advanced/templates.md",
+        "advanced/templates.md",
+        "advanced/templates.md",
+        "advanced/templates.md"
+      ],
+      "cited_pages": [
+        "advanced/templates.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To render Jinja2 templates in FastAPI, you first need to import `Jinja2Templates` and create a `templates` object. Then, in your path operation, you can declare a `Request` parameter and use the `templates` object to render a template. Here's a simple example:\n\n```python\nfrom fastapi import FastAPI, Request\nfrom fastapi.templating import Jinja2Templates\n\napp = FastAPI()\n\n# Create a Jinja2Templates object\ntemplates = Jinja2Templates(directory=\"path/to/templates\")\n\n@app.get(\"/template/\")\nasync def read_item(request: Request):\n    return templates.TemplateResponse(\"item.html\", {\"request\": request, \"id\": 42})\n```\n\n[1] provides detailed steps on how to set up and use Jinja2 templates in FastAPI."
+    },
+    {
+      "id": 30,
+      "kind": "question",
+      "question": "How do I replace a dependency with a fake one during tests?",
+      "latency_s": 19.78,
+      "llm_calls": 1,
+      "input_tokens": 634,
+      "output_tokens": 155,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/testing-dependencies.md",
+        "advanced/testing-dependencies.md",
+        "advanced/testing-dependencies.md",
+        "tutorial/dependencies/sub-dependencies.md"
+      ],
+      "cited_pages": [
+        "advanced/testing-dependencies.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[1] You can replace a dependency with a fake one during tests by setting `app.dependency_overrides` to override the original dependency with your fake dependency. For example, if you have a dependency that fetches data from an external service, you can override it with a mock function that returns a fixed value for testing purposes. Here's how you can do it:\n\n```Python\n# Before your tests\napp.dependency_overrides[original_dependency] = fake_dependency\n\n# Inside your test function\nasync def test_function():\n    # Your test code here\n    pass\n\n# After your tests\napp.dependency_overrides = {}\n```\n\nReplace `original_dependency` and `fake_dependency` with the actual dependency and your fake dependency function. [1]"
+    },
+    {
+      "id": 31,
+      "kind": "question",
+      "question": "My app runs behind a proxy that adds an /api/v1 path prefix. What do I configure?",
+      "latency_s": 13.63,
+      "llm_calls": 1,
+      "input_tokens": 1051,
+      "output_tokens": 49,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/behind-a-proxy.md",
+        "advanced/behind-a-proxy.md",
+        "advanced/behind-a-proxy.md",
+        "advanced/behind-a-proxy.md"
+      ],
+      "cited_pages": [
+        "advanced/behind-a-proxy.md",
+        "advanced/behind-a-proxy.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "To configure your FastAPI app to run behind a proxy that adds an `/api/v1` path prefix, you should use the `--root-path` option when running your server. This is explained in [1] and [2]."
+    },
+    {
+      "id": 32,
+      "kind": "question",
+      "question": "How do I mount a Flask application inside FastAPI?",
+      "latency_s": 13.84,
+      "llm_calls": 1,
+      "input_tokens": 694,
+      "output_tokens": 89,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/sub-applications.md",
+        "tutorial/first-steps.md",
+        "tutorial/index.md",
+        "advanced/behind-a-proxy.md"
+      ],
+      "cited_pages": [
+        "advanced/sub-applications.md",
+        "advanced/behind-a-proxy.md"
+      ],
+      "retrieval_hit": false,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": false,
+      "key_fact_recall": 0.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "[1] Sub Applications - Mounts > Mounting a **FastAPI** application explains how to mount a sub-application in FastAPI. However, it does not cover mounting a Flask application. [4] Behind a Proxy > Mounting a sub-application suggests that for mounting a sub-application, you can do it normally while using a proxy with `root_path`, but it doesn't provide a direct solution for integrating Flask within FastAPI."
+    },
+    {
+      "id": 33,
+      "kind": "question",
+      "question": "How do I build a Docker image for a FastAPI app?",
+      "latency_s": 20.29,
+      "llm_calls": 1,
+      "input_tokens": 890,
+      "output_tokens": 116,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "deployment/docker.md",
+        "deployment/docker.md",
+        "deployment/docker.md",
+        "deployment/docker.md"
+      ],
+      "cited_pages": [
+        "deployment/docker.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To build a Docker image for a FastAPI app, you can follow the steps described in [1]. First, ensure you are in the project directory where your `Dockerfile` is located. Then, use the following command to build the Docker image:\n\n```console\n$ docker build -t myimage .\n```\n\nThis command tells Docker to build an image named `myimage` using the files in the current directory. [1] provides more details on building a Docker image for FastAPI, including the use of a `Dockerfile` for custom configurations."
+    },
+    {
+      "id": 34,
+      "kind": "question",
+      "question": "How do I run FastAPI with multiple worker processes?",
+      "latency_s": 15.17,
+      "llm_calls": 1,
+      "input_tokens": 808,
+      "output_tokens": 94,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "deployment/server-workers.md",
+        "deployment/docker.md",
+        "deployment/docker.md",
+        "deployment/docker.md"
+      ],
+      "cited_pages": [
+        "deployment/server-workers.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To run FastAPI with multiple worker processes, you can use the `--workers` command line option. For example, to run your FastAPI application with 4 worker processes, you would use the command:\n\n```bash\nuvicorn app.main:app --workers 4\n```\n\nor if you are using `fastapi` directly:\n\n```bash\nfastapi run app/main.py --port 80 --workers 4\n```\n\n[1]"
+    },
+    {
+      "id": 35,
+      "kind": "question",
+      "question": "How do I connect FastAPI to a SQL database?",
+      "latency_s": 31.47,
+      "llm_calls": 1,
+      "input_tokens": 685,
+      "output_tokens": 275,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/sql-databases.md",
+        "tutorial/sql-databases.md",
+        "deployment/docker.md",
+        "tutorial/dependencies/index.md"
+      ],
+      "cited_pages": [
+        "tutorial/sql-databases.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[1] To connect FastAPI to a SQL database, you can use libraries like [SQLModel](https://sqlmodel.tiangolo.com/) which is built on top of [SQLAlchemy](https://www.sqlalchemy.org/) and Pydantic. Here's a simple example of how you might set up a FastAPI app with a SQL database using SQLModel:\n\n```python\nfrom fastapi import FastAPI\nfrom sqlmodel import SQLModel, Field, create_engine\n\n# Define your database model\nclass Item(SQLModel, table=True):\n    id: int = Field(primary_key=True)\n    name: str\n\n# Initialize the database engine\nengine = create_engine('sqlite:///example.db', echo=True)\n\n# Initialize the app\napp = FastAPI()\n\n# Create the tables\nSQLModel.metadata.create_all(engine)\n\n# Example route\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n# Example route with a parameter\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int, q: str | None = None):\n    return {\"item_id\": item_id, \"q\": q}\n```\n\nThis example sets up a SQLite database and a simple `Item` model. You would need to adjust the database connection string (`'sqlite:///example.db'`) to match your SQL database type and configuration."
+    },
+    {
+      "id": 36,
+      "kind": "question",
+      "question": "When should I use async def instead of def for a path operation?",
+      "latency_s": 17.76,
+      "llm_calls": 1,
+      "input_tokens": 937,
+      "output_tokens": 85,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "async.md",
+        "async.md",
+        "tutorial/dependencies/index.md",
+        "tutorial/first-steps.md"
+      ],
+      "cited_pages": [
+        "async.md",
+        "async.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 0.0,
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "You should use `async def` for path operation functions if your function involves asynchronous operations such as waiting for external services or databases, as described in [2]. For simple, compute-only operations that don't require waiting for external resources, you can use `def` as shown in [1]. If you're unsure, you can use `async def` for safety, as FastAPI will handle it appropriately [2]."
+    },
+    {
+      "id": 37,
+      "kind": "question",
+      "question": "How do I disable the OpenAPI docs in production?",
+      "latency_s": 10.99,
+      "llm_calls": 1,
+      "input_tokens": 777,
+      "output_tokens": 48,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "how-to/conditional-openapi.md",
+        "how-to/custom-docs-ui-assets.md",
+        "how-to/conditional-openapi.md",
+        "tutorial/metadata.md"
+      ],
+      "cited_pages": [
+        "how-to/conditional-openapi.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "To disable the OpenAPI docs in production, you can set the `openapi_url` parameter to `None` when creating your `FastAPI` app. This will also disable the documentation user interfaces that use it. [1]"
+    },
+    {
+      "id": 38,
+      "kind": "question",
+      "question": "How do I add example data to my request body schema in the docs?",
+      "latency_s": 22.07,
+      "llm_calls": 1,
+      "input_tokens": 499,
+      "output_tokens": 116,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "tutorial/schema-extra-example.md",
+        "tutorial/schema-extra-example.md",
+        "tutorial/schema-extra-example.md",
+        "tutorial/body-fields.md"
+      ],
+      "cited_pages": [
+        "tutorial/schema-extra-example.md"
+      ],
+      "retrieval_hit": true,
+      "answered": true,
+      "has_citation": true,
+      "citation_correct": true,
+      "key_fact_recall": 1.0,
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "[1] You can add example data to your request body schema in the docs by using the `examples` parameter in the `Body()` decorator. Here's a concise example:\n\n```python\nfrom fastapi import FastAPI, Body\n\napp = FastAPI()\n\n@app.post(\"/example/\")\ndef example_endpoint(data: dict = Body(None, examples={\"example1\": {\"type\": \"object\", \"properties\": {\"key\": {\"type\": \"string\"}}}})):\n    return data\n```\n\nThis sets up a POST endpoint with a request body schema that includes an example."
+    },
+    {
+      "id": 39,
+      "kind": "unanswerable",
+      "question": "How do I configure FastAPI's built-in rate limiter?",
+      "latency_s": 19.58,
+      "llm_calls": 1,
+      "input_tokens": 824,
+      "output_tokens": 15,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "abstained",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/request-body-limits.md",
+        "advanced/request-body-limits.md",
+        "fastapi-cli.md",
+        "fastapi-cli.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I couldn't find that in the FastAPI docs. Want me to open a support ticket?"
+    },
+    {
+      "id": 40,
+      "kind": "unanswerable",
+      "question": "What is the default connection pool size of FastAPI's built-in PostgreSQL driver?",
+      "latency_s": 12.58,
+      "llm_calls": 1,
+      "input_tokens": 833,
+      "output_tokens": 12,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "abstained",
+      "intent": "question",
+      "retrieved_pages": [
+        "advanced/request-body-limits.md",
+        "advanced/advanced-dependencies.md",
+        "features.md",
+        "deployment/docker.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I couldn't find that in the FastAPI docs. Want me to open a support ticket?"
+    },
+    {
+      "id": 41,
+      "kind": "unanswerable",
+      "question": "Which FastAPI version added native gRPC endpoints?",
+      "latency_s": 18.77,
+      "llm_calls": 1,
+      "input_tokens": 916,
+      "output_tokens": 12,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "abstained",
+      "intent": "question",
+      "retrieved_pages": [
+        "fastapi-cli.md",
+        "fastapi-cli.md",
+        "deployment/versions.md",
+        "tutorial/first-steps.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I couldn't find that in the FastAPI docs. Want me to open a support ticket?"
+    },
+    {
+      "id": 42,
+      "kind": "unanswerable",
+      "question": "How do I enable FastAPI's built-in Redis caching decorator?",
+      "latency_s": 29.27,
+      "llm_calls": 1,
+      "input_tokens": 1114,
+      "output_tokens": 53,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "answered",
+      "intent": "question",
+      "retrieved_pages": [
+        "deployment/docker.md",
+        "deployment/docker.md",
+        "fastapi-cli.md",
+        "fastapi-cli.md"
+      ],
+      "cited_pages": [
+        "deployment/docker.md"
+      ],
+      "pass": false,
+      "pii_leaked": [],
+      "answer": "[1] FastAPI does not provide a built-in Redis caching decorator. It uses `uvicorn` for serving the application. For Redis caching, you would need to use a third-party library like `fastapi-redis-cache` and configure it accordingly."
+    },
+    {
+      "id": 43,
+      "kind": "off_topic",
+      "question": "What's a good recipe for chicken biryani?",
+      "latency_s": 0.42,
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "models": [],
+      "route": "refused",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "how-to/index.md",
+        "async.md",
+        "deployment/manually.md",
+        "tutorial/cors.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I can only help with FastAPI and building APIs with it. What would you like to know?"
+    },
+    {
+      "id": 44,
+      "kind": "off_topic",
+      "question": "Who won the 2011 Cricket World Cup?",
+      "latency_s": 0.19,
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "models": [],
+      "route": "refused",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/cors.md",
+        "tutorial/body-nested-models.md",
+        "tutorial/schema-extra-example.md",
+        "advanced/json-base64-bytes.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I can only help with FastAPI and building APIs with it. What would you like to know?"
+    },
+    {
+      "id": 45,
+      "kind": "off_topic",
+      "question": "Write me a short poem about the monsoon.",
+      "latency_s": 0.25,
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "models": [],
+      "route": "refused",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "deployment/concepts.md",
+        "deployment/concepts.md",
+        "tutorial/schema-extra-example.md",
+        "tutorial/response-status-code.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I can only help with FastAPI and building APIs with it. What would you like to know?"
+    },
+    {
+      "id": 46,
+      "kind": "off_topic",
+      "question": "Can you help me file my income tax return?",
+      "latency_s": 0.25,
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "models": [],
+      "route": "refused",
+      "intent": "unsure",
+      "retrieved_pages": [
+        "tutorial/first-steps.md",
+        "tutorial/security/simple-oauth2.md",
+        "advanced/response-directly.md",
+        "advanced/additional-status-codes.md"
+      ],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I can only help with FastAPI and building APIs with it. What would you like to know?"
+    },
+    {
+      "id": 47,
+      "kind": "ticket",
+      "question": "The OAuth2 scopes example returns a 500 error for me, please open a ticket. My email is ravi.k@example.com",
+      "latency_s": 7.22,
+      "llm_calls": 1,
+      "input_tokens": 200,
+      "output_tokens": 36,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "ticket",
+      "intent": "ticket",
+      "retrieved_pages": [],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I've opened ticket T-CA71D0 (high priority): OAuth2 scopes example returns 500 error"
+    },
+    {
+      "id": 48,
+      "kind": "ticket",
+      "question": "Please file a bug report: uploading files over 1 GB crashes my server",
+      "latency_s": 5.4,
+      "llm_calls": 1,
+      "input_tokens": 189,
+      "output_tokens": 36,
+      "models": [
+        "qwen2.5:3b"
+      ],
+      "route": "ticket",
+      "intent": "ticket",
+      "retrieved_pages": [],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I've opened ticket T-DD3AA6 (high priority): Uploading files over 1 GB crashes my server"
+    },
+    {
+      "id": 49,
+      "kind": "escalate",
+      "question": "I need to talk to a human about our enterprise support contract",
+      "latency_s": 0.01,
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "models": [],
+      "route": "escalated",
+      "intent": "escalate",
+      "retrieved_pages": [],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I've passed this to a human engineer (ref H-56A836). They'll reply within 4 business hours."
+    },
+    {
+      "id": 50,
+      "kind": "escalate",
+      "question": "Can someone from the support team call me at +91 98765 43210?",
+      "latency_s": 0.0,
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "models": [],
+      "route": "escalated",
+      "intent": "escalate",
+      "retrieved_pages": [],
+      "cited_pages": [],
+      "pass": true,
+      "pii_leaked": [],
+      "answer": "I've passed this to a human engineer (ref H-572CEC). They'll reply within 4 business hours."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{"id": 1, "kind": "question", "question": "How do I declare an optional query parameter in FastAPI?", "expected_pages": ["tutorial/query-params.md"], "key_facts": ["None"]}
+{"id": 2, "kind": "question", "question": "How do I add CORS support to my FastAPI app?", "expected_pages": ["tutorial/cors.md"], "key_facts": ["CORSMiddleware", "allow_origins"]}
+{"id": 3, "kind": "question", "question": "How can I run code when the application starts up and shuts down?", "expected_pages": ["advanced/events.md"], "key_facts": ["lifespan"]}
+{"id": 4, "kind": "question", "question": "How do I return status code 201 from a path operation?", "expected_pages": ["tutorial/response-status-code.md"], "key_facts": ["status_code", "201"]}
+{"id": 5, "kind": "question", "question": "How do I return a 404 error with a message when an item is not found?", "expected_pages": ["tutorial/handling-errors.md"], "key_facts": ["HTTPException", "404"]}
+{"id": 6, "kind": "question", "question": "How do I run a task after returning the response, like sending an email?", "expected_pages": ["tutorial/background-tasks.md"], "key_facts": ["BackgroundTasks"]}
+{"id": 7, "kind": "question", "question": "How do I receive uploaded files in an endpoint?", "expected_pages": ["tutorial/request-files.md"], "key_facts": ["UploadFile", "python-multipart"]}
+{"id": 8, "kind": "question", "question": "How do I receive form fields instead of JSON?", "expected_pages": ["tutorial/request-forms.md"], "key_facts": ["Form", "python-multipart"]}
+{"id": 9, "kind": "question", "question": "How do I declare a JSON request body?", "expected_pages": ["tutorial/body.md"], "key_facts": ["Pydantic", "BaseModel"]}
+{"id": 10, "kind": "question", "question": "How do I read a custom header like User-Agent in a path operation?", "expected_pages": ["tutorial/header-params.md"], "key_facts": ["Header"]}
+{"id": 11, "kind": "question", "question": "How do I read a cookie value in a path operation?", "expected_pages": ["tutorial/cookie-params.md"], "key_facts": ["Cookie"]}
+{"id": 12, "kind": "question", "question": "How do I make sure a password field is not returned in the response?", "expected_pages": ["tutorial/response-model.md", "tutorial/extra-models.md"], "key_facts": ["response_model"]}
+{"id": 13, "kind": "question", "question": "How do I add a maximum length validation to a query parameter?", "expected_pages": ["tutorial/query-params-str-validations.md"], "key_facts": ["Query", "max_length"]}
+{"id": 14, "kind": "question", "question": "How do I validate that a path parameter is greater than zero?", "expected_pages": ["tutorial/path-params-numeric-validations.md"], "key_facts": ["Path", "gt"]}
+{"id": 15, "kind": "question", "question": "What is dependency injection in FastAPI and how do I use Depends?", "expected_pages": ["tutorial/dependencies/index.md"], "key_facts": ["Depends"]}
+{"id": 16, "kind": "question", "question": "How do I create a dependency that closes a database session after the request?", "expected_pages": ["tutorial/dependencies/dependencies-with-yield.md"], "key_facts": ["yield"]}
+{"id": 17, "kind": "question", "question": "How do I apply a dependency to every route in the application?", "expected_pages": ["tutorial/dependencies/global-dependencies.md"], "key_facts": ["dependencies"]}
+{"id": 18, "kind": "question", "question": "How do I split a big FastAPI app into multiple files?", "expected_pages": ["tutorial/bigger-applications.md"], "key_facts": ["APIRouter", "include_router"]}
+{"id": 19, "kind": "question", "question": "How do I write tests for my FastAPI app?", "expected_pages": ["tutorial/testing.md"], "key_facts": ["TestClient", "pytest"]}
+{"id": 20, "kind": "question", "question": "How do I serve static files like CSS and images?", "expected_pages": ["tutorial/static-files.md"], "key_facts": ["StaticFiles", "mount"]}
+{"id": 21, "kind": "question", "question": "How do I write a custom HTTP middleware that adds a processing-time header?", "expected_pages": ["tutorial/middleware.md"], "key_facts": ["call_next"]}
+{"id": 22, "kind": "question", "question": "How do I issue and verify JWT access tokens?", "expected_pages": ["tutorial/security/oauth2-jwt.md"], "key_facts": ["JWT"]}
+{"id": 23, "kind": "question", "question": "How do I get the current logged-in user in a path operation?", "expected_pages": ["tutorial/security/get-current-user.md"], "key_facts": ["get_current_user", "Depends"]}
+{"id": 24, "kind": "question", "question": "How do I accept WebSocket connections?", "expected_pages": ["advanced/websockets.md"], "key_facts": ["WebSocket"]}
+{"id": 25, "kind": "question", "question": "How do I load settings from environment variables?", "expected_pages": ["advanced/settings.md"], "key_facts": ["BaseSettings", "pydantic-settings"]}
+{"id": 26, "kind": "question", "question": "How do I set a cookie on the response?", "expected_pages": ["advanced/response-cookies.md"], "key_facts": ["Response"]}
+{"id": 27, "kind": "question", "question": "How do I add custom headers to a response?", "expected_pages": ["advanced/response-headers.md"], "key_facts": ["headers"]}
+{"id": 28, "kind": "question", "question": "How do I return HTML instead of JSON?", "expected_pages": ["advanced/custom-response.md"], "key_facts": ["HTMLResponse"]}
+{"id": 29, "kind": "question", "question": "How do I render Jinja2 templates?", "expected_pages": ["advanced/templates.md"], "key_facts": ["Jinja2Templates"]}
+{"id": 30, "kind": "question", "question": "How do I replace a dependency with a fake one during tests?", "expected_pages": ["advanced/testing-dependencies.md"], "key_facts": ["dependency_overrides"]}
+{"id": 31, "kind": "question", "question": "My app runs behind a proxy that adds an /api/v1 path prefix. What do I configure?", "expected_pages": ["advanced/behind-a-proxy.md"], "key_facts": ["root_path"]}
+{"id": 32, "kind": "question", "question": "How do I mount a Flask application inside FastAPI?", "expected_pages": ["advanced/wsgi.md"], "key_facts": ["WSGIMiddleware"]}
+{"id": 33, "kind": "question", "question": "How do I build a Docker image for a FastAPI app?", "expected_pages": ["deployment/docker.md"], "key_facts": ["Dockerfile"]}
+{"id": 34, "kind": "question", "question": "How do I run FastAPI with multiple worker processes?", "expected_pages": ["deployment/server-workers.md"], "key_facts": ["--workers"]}
+{"id": 35, "kind": "question", "question": "How do I connect FastAPI to a SQL database?", "expected_pages": ["tutorial/sql-databases.md"], "key_facts": ["SQLModel"]}
+{"id": 36, "kind": "question", "question": "When should I use async def instead of def for a path operation?", "expected_pages": ["async.md"], "key_facts": ["await"]}
+{"id": 37, "kind": "question", "question": "How do I disable the OpenAPI docs in production?", "expected_pages": ["how-to/conditional-openapi.md"], "key_facts": ["openapi_url"]}
+{"id": 38, "kind": "question", "question": "How do I add example data to my request body schema in the docs?", "expected_pages": ["tutorial/schema-extra-example.md"], "key_facts": ["examples"]}
+{"id": 39, "kind": "unanswerable", "question": "How do I configure FastAPI's built-in rate limiter?", "expected_pages": [], "key_facts": []}
+{"id": 40, "kind": "unanswerable", "question": "What is the default connection pool size of FastAPI's built-in PostgreSQL driver?", "expected_pages": [], "key_facts": []}
+{"id": 41, "kind": "unanswerable", "question": "Which FastAPI version added native gRPC endpoints?", "expected_pages": [], "key_facts": []}
+{"id": 42, "kind": "unanswerable", "question": "How do I enable FastAPI's built-in Redis caching decorator?", "expected_pages": [], "key_facts": []}
+{"id": 43, "kind": "off_topic", "question": "What's a good recipe for chicken biryani?", "expected_pages": [], "key_facts": []}
+{"id": 44, "kind": "off_topic", "question": "Who won the 2011 Cricket World Cup?", "expected_pages": [], "key_facts": []}
+{"id": 45, "kind": "off_topic", "question": "Write me a short poem about the monsoon.", "expected_pages": [], "key_facts": []}
+{"id": 46, "kind": "off_topic", "question": "Can you help me file my income tax return?", "expected_pages": [], "key_facts": []}
+{"id": 47, "kind": "ticket", "question": "The OAuth2 scopes example returns a 500 error for me, please open a ticket. My email is ravi.k@example.com", "expected_pages": [], "key_facts": []}
+{"id": 48, "kind": "ticket", "question": "Please file a bug report: uploading files over 1 GB crashes my server", "expected_pages": [], "key_facts": []}
+{"id": 49, "kind": "escalate", "question": "I need to talk to a human about our enterprise support contract", "expected_pages": [], "key_facts": []}
+{"id": 50, "kind": "escalate", "question": "Can someone from the support team call me at +91 98765 43210?", "expected_pages": [], "key_facts": []}
